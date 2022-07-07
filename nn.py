@@ -21,24 +21,24 @@ class Net(nn.Module):
         out =self.predict(out)
         return out
 
-x=pd.read_csv('data/train.csv')
-y=x['price_doc']
-x.drop('price_doc')
-inputNum=len(x.columns)
-net = Net(inputNum,25,15,1)
-print(net)
+if __name__ == '__main__':
+    x=pd.read_csv('data/train.csv')
+    y=x['price_doc']
+    x.drop(columns=['price_doc'],inplace=True)
+    inputNum=len(x.columns)
+    net = Net(inputNum,25,15,1)
+    print(net)
 
-optimizer = torch.optim.SGD(net.parameters(),lr = 0.1)
-loss_func = torch.nn.MSELoss()
+    optimizer = torch.optim.SGD(net.parameters(),lr = 0.1)
+    loss_func = torch.nn.MSELoss()
 
-for t in range(40):
-    prediction = net(x)
-    loss = loss_func(prediction,y)
+    for t in range(40):
+        prediction = net.forward(x)
+        print(prediction)
+        loss = loss_func(prediction,y)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        print(t,i,loss.data)
 
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-    print(t)
-
-
-torch.save(net.state_dict(), 'net_params'+str(inputNum)+'-25-15-1.pkl')
+    torch.save(net.state_dict(), 'net_params'+str(inputNum)+'-25-15-1.pkl')

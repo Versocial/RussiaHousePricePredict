@@ -62,8 +62,8 @@ def clean(df):
     # 方差选择法，返回值为特征选择后的数据
     # 参数threshold为方差的阈值
     df=variance_threshold_selector(df)
-    SelectKBest(lambda X, Y: array(map(lambda x: pearsonr(x, Y), X.T)).T, k=2)\
-        .fit_transform(iris.data, iris.target)
+    df.dropna(thresh=len(df.columns)*2/3,inplace=True)#删除1/3以上为空的行
+
 
 
 if __name__ == '__main__':
@@ -78,4 +78,5 @@ if __name__ == '__main__':
     # testDf = pd.read_csv('data/test.csv')
     #
     clean(trainDf)
+    trainDf.to_csv('data/train.csv')
 

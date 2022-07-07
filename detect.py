@@ -39,19 +39,17 @@ def drawCorrelation(df=pd.read_csv('data/train.csv'),target='price_doc'):
     ax.set_title('Correlation coefficient of the variables')
     plt.show()
 
-def a():
+def a(df_train=pd.read_csv('data/train.csv')):
     # 显示所有列
     pd.set_option('display.max_columns', None)
     # 显示所有行
     pd.set_option('display.max_rows', None)
 
-    df_train=pd.read_csv('data/train.csv')
+
     print(df_train.dtypes)
     print(df_train.info())
 
-    # 显示所有列
     pd.set_option('display.max_columns', 10)
-    # 显示所有行
     pd.set_option('display.max_rows', 10)
     print("sssssssssssssssss")
     print(df_train.select_dtypes(include=object))
@@ -75,8 +73,7 @@ def c():
     sns.pairplot(df_train[cols], size=2.5)
     plt.show();
 
-def d():
-    all_data=pd.read_csv('data/train.csv')
+def nanData(all_data=pd.read_csv('data/train.csv')):
     ## 找出哪些列有缺失值，以及缺失的比例有多少
     missing_data = all_data.isnull().sum()
     percent = all_data.isnull().sum() / len(all_data)
@@ -88,12 +85,18 @@ def d():
 def e():
     print(pd.read_csv('data/train.csv',low_memory=False).describe())
 
-def p():
-    train_df=pd.read_csv('data/train.csv')
+def price_histgram(train_df=pd.read_csv('data/train.csv')):#histgram
     plt.figure(figsize=(8, 6))
-    plt.scatter(range(train_df.shape[0]), np.sort(train_df.price_doc.values))
-    plt.xlabel('index', fontsize=12)
-    plt.ylabel('price', fontsize=12)
+    # ax = plt.gca()
+    # 用科学记数法
+    # ax.ticklabel_format(style='sci', scilimits=(0, 2), axis='y')
+    # ax.ticklabel_format(style='sci', scilimits=(0, 1000), axis='x')
+
+    print(train_df.price_doc.values,type(train_df.price_doc.values))
+    plt.hist(train_df.price_doc.values, bins=400, density=False, facecolor="blue", edgecolor="black", alpha=0.7)
+    # plt.scatter(range(train_df.shape[0]), np.sort(train_df.price_doc.values))
+    plt.xlabel('price', fontsize=12)
+    plt.ylabel('count', fontsize=12)
     plt.show()
 
 def t():
@@ -118,5 +121,48 @@ def t():
     plt.xticks(rotation='vertical')
     plt.show()
 
+
+def fixData(df=pd.read_csv('data/train.csv')):
+    low=df['price_doc'].quantile(0.005)
+    high = df['price_doc'].quantile(0.995)
+    df.drop(df[(df['price_doc']<low)|(df['price_doc']>high)].index,inplace=True)
+    price_histgram(df)
+    nanData(df)
+    drawPriceAreaDiagram(df)
+    df['temp']=df['price_doc']/df['full_sq']
+    df['temp2'] = df['price_doc'] / df['life_sq']
+    print(len(df.index))
+    varA=df['temp'].min()
+    # print(varA,type(varA))
+    varB=df['temp2'].min()
+    # print(varB,type(varB))
+    # print(df['temp2'].sort_values())
+    df.drop(df[df['temp']==varA].index,inplace=True)
+    df.drop(df[df['temp2'] == varB].index, inplace=True)
+    # print(len(df.index))
+    # df=df[df['temp2']==np.nan | df['temp2']>varB]
+    print(len(df.index))
+    df.drop(columns=['temp','temp2'],inplace=True)
+    drawPriceAreaDiagram(df)
+
+def drawPriceAreaDiagram(df_train=pd.read_csv('data/train.csv')):
+    plt.figure(figsize=(8, 6), dpi=80, num=4)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.scatter(x=df_train['full_sq'], y=df_train['price_doc'])
+    plt.xlabel('full_sq（总面积）', fontsize=15)
+    plt.ylabel('SalePrice（房价）', fontsize=15)
+    plt.show()
+
+    plt.scatter(x=df_train['life_sq'], y=df_train['price_doc'])
+    plt.xlabel('life_sq（居住面积）', fontsize=15)
+    plt.ylabel('SalePrice（房价）', fontsize=15)
+    plt.show()
+
 if __name__ == '__main__':
-    drawCorrelation()
+    # 显示所有列
+    pd.set_option('display.max_columns', None)
+    # 显示所有行
+    pd.set_option('display.max_rows', None)
+    # price_histgram()
+    fixData()
+    # drawPriceAreaDiagram()

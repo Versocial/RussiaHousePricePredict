@@ -7,8 +7,9 @@ import matplotlib.pyplot as plt
 from torch.autograd import Variable
 
 x = torch.unsqueeze(torch.linspace(-1,1,100),dim=1)
+print(x)
 y = x.pow(3)+0.1*torch.randn(x.size())
-
+print(y)
 x , y =(Variable(x),Variable(y))
 
 # plt.scatter(x,y)
@@ -26,7 +27,7 @@ class Net(nn.Module):
         out = self.hidden1(input)
         out = F.relu(out)
         out = self.hidden2(out)
-        out = F.sigmoid(out)
+        out = torch.sigmoid(out)
         out =self.predict(out)
         return out
 
@@ -40,7 +41,7 @@ plt.ion()
 plt.show()
 
 for t in range(5000):
-    prediction = net(x)
+    prediction = net.forward(x)
     loss = loss_func(prediction,y)
 
     optimizer.zero_grad()
@@ -53,7 +54,7 @@ for t in range(5000):
     #     plt.plot(x.data.numpy(), prediction.data.numpy(), 'r-', lw=5)
     #     plt.text(0.5, 0, 'Loss = %.4f' % loss.data, fontdict={'size': 20, 'color': 'red'})
     #     plt.title(str(t))
-        # plt.pause(0.05)
+    #     plt.pause(0.05)
 plt.cla()
 plt.scatter(x.data.numpy(), y.data.numpy())
 plt.plot(x.data.numpy(), prediction.data.numpy(), 'r-', lw=5)
