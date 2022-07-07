@@ -158,11 +158,22 @@ def drawPriceAreaDiagram(df_train=pd.read_csv('data/train.csv')):
     plt.ylabel('SalePrice（房价）', fontsize=15)
     plt.show()
 
+def best(df_train=pd.read_csv('data/train.csv')):
+    corrmat = df_train.corr()
+    plt.subplots(figsize=(12,8))
+    k = 10
+    cols = corrmat.nlargest(k, 'price_doc')['price_doc'].index
+    cm = np.corrcoef(df_train[cols].values.T)
+    sns.heatmap(cm, cbar=True, annot=True, square=True, fmt='.2f',
+                annot_kws={'size': 15}, yticklabels=cols.values, xticklabels=cols.values)
+    plt.show()
+
+
 if __name__ == '__main__':
     # 显示所有列
     pd.set_option('display.max_columns', None)
     # 显示所有行
     pd.set_option('display.max_rows', None)
     # price_histgram()
-    fixData()
+    best()
     # drawPriceAreaDiagram()

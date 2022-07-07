@@ -14,17 +14,20 @@ x = torch.unsqueeze(torch.linspace(-1,1,100),dim=1)
 y = x.pow(3)+0.1*torch.randn(x.size())
 # print(y)
 X_train,y_train =(Variable(x),Variable(y))
-print(X_train,y_train)
+# print(X_train,y_train)
 model_mlp = MLPRegressor(
     hidden_layer_sizes=(6,5),  activation='relu', solver='adam', alpha=0.0001, batch_size='auto',
     learning_rate='constant', learning_rate_init=0.001, power_t=0.5, max_iter=5000, shuffle=True,
     random_state=1, tol=0.0001, verbose=False, warm_start=False, momentum=0.9, nesterovs_momentum=True,
     early_stopping=False,beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+# input('s')
 model_mlp.fit(X_train, y_train)
-
+# input('d')
 startTime = time.time()
 x1 = x.reshape(-1,1)
-mlp_score=model_mlp.score(x1,y)
+# input('f')
+mlp_score=model_mlp.score(X_train, y_train)
+print(x1,y)
 print('sklearn多层感知器-回归模型得分',mlp_score)#预测正确/总数
 result = model_mlp.predict(x1)
 stopTime = time.time()
