@@ -16,6 +16,29 @@ def showAsNormDistribution(df,target):
     (mu, sigma) = norm.fit(df[target])
     print('\n miu = {:.2f} and sigma = {:.2f}\n'.format(mu, sigma))
 
+def drawCorrelation(df=pd.read_csv('data/train.csv'),target='price_doc'):
+    x_cols = [col for col in df.columns if df[col].dtype != 'object' and col!=target]
+    labels = []
+    values = []
+    for col in x_cols:
+        labels.append(col)
+        v=np.corrcoef(df[col].values, df[target].values)[0, 1]
+        values.append(v)
+        print(col,v)
+    corr_df = pd.DataFrame({'col_labels': labels, 'corr_values': values})
+    corr_df = corr_df.sort_values(by='corr_values')
+
+    ind = np.arange(len(labels))
+    width = 0.5
+    fig, ax = plt.subplots(figsize=(36, 120))
+    rects = ax.barh(ind, np.array(corr_df.corr_values.values), color='y')
+
+    ax.set_yticks(ind)
+    ax.set_yticklabels(corr_df.col_labels.values, rotation='horizontal')
+    ax.set_xlabel('Correlation coefficient')
+    ax.set_title('Correlation coefficient of the variables')
+    plt.show()
+
 def a():
     # 显示所有列
     pd.set_option('display.max_columns', None)
@@ -96,4 +119,4 @@ def t():
     plt.show()
 
 if __name__ == '__main__':
-    a()
+    drawCorrelation()
